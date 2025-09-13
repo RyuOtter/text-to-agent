@@ -1,0 +1,125 @@
+grpo:
+  group_size: 2
+  max_turns: 8
+  num_epochs: 1
+  per_device_train_batch_size: 2
+  base_policy_seed: 1337
+  off_policy: false
+  quantize_8bit: false
+  learning_rate: 2.0e-5
+  beta: 0.0
+  gradient_accumulation_steps: 1
+  max_grad_norm: 2.0
+  bf16: true
+  fp16: false
+  gradient_checkpointing: true
+  lr_scheduler_type: "cosine"
+  loss_type: "dr_grpo"
+  dataloader_pin_memory: false
+  dataloader_num_workers: 0
+  use_vllm: true
+  vllm_device: "cuda:0"
+  vllm_gpu_memory_utilization: 0.4
+
+  optimizer:
+    name: "adamw_torch"
+    weight_decay: 0.0
+    betas: [0.9, 0.999]
+    eps: 1.0e-8
+
+logging:
+  results_dir_root: "/workspace/thesis/Results"
+  checkpoints_root: "/workspace/thesis/checkpoints"
+  run_stamp_format: "%Y%m%d-%H%M%S"
+  convo_log_name: "conversations.jsonl"
+  actions_log_name: "actions.jsonl"
+  enable_conversation_log: true
+  logging_steps: 1
+  save_steps: 50
+  benchmark_naming: true
+
+wandb:
+  enabled: false
+  project: "thesis-mtra-grpo"
+  entity: "x"
+  tags: ["MTRA", "GRPO", "RL"]
+  mode: "online"
+  dir: "./wandb_logs"
+
+data:
+  benchmark: "MultiWOZ"
+  domain: "MultiWOZ"
+  n_datapoints: 500
+  splits: ["train", "dev"]
+  data_seed: 42
+  prompt_category: "vanilla"
+  iteration: "latest"
+  test_mode: true
+
+num_gpus: 1
+
+assistant_model:
+  model_name: "meta-llama/Llama-3.1-8B-Instruct"
+  max_seq_length: 4200
+  temperature: 0.8
+  max_tokens: 200
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.0
+
+evaluator_model:
+  provider: "groq"
+  model_name: "llama-3.1-8b-instant"
+  temperature: 0.0
+  max_tokens: 512
+
+user_model:
+  provider: "groq"
+  model_name: "llama-3.1-8b-instant"
+  temperature: 0.0
+  max_tokens: 256
+
+rewards:
+  config:
+    w_inform: 3.0
+    w_success: 3.0
+    w_book: 3.0
+  
+  enable_tools_rewards: true
+  enable_naturalness_rewards: true
+  
+  turn_config:
+    json_valid_reward: 0.05
+    json_invalid_penalty: -0.1
+    json_no_tool_reward: 0.0
+    repetition_penalty: -0.3
+    booking_no_reference_penalty: -0.3
+    json_leakage_penalty: -0.3
+    tools_reward_cap: 1.0
+    enable_json_validity: true
+    enable_repetition_penalty: true
+    enable_booking_validation: true
+    enable_json_leakage_penalty: true
+      
+  naturalness_config:
+    cost_per_turn: -0.05
+    overlong_penalty: -0.05
+    overlong_threshold: 120
+    clarification_reward: 0.2
+    task_progression_min: -0.3
+    task_progression_max: 0.3
+    naturalness_judge_min: -0.3
+    naturalness_judge_max: 0.3
+    conciseness_cap_negative: -0.5
+    naturalness_cap_positive: 1.0
+    naturalness_cap_negative: -0.5
+    enable_conciseness: true
+    enable_helpfulness: true
+    enable_naturalness: true
+    
+hf_hub:
+  enabled: true
+  push_adapters: true
+  adapter_repo_base: "huggingface_repo"
+  private: true

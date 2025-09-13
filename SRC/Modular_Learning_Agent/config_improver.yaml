@@ -1,0 +1,60 @@
+api_keys:
+  openai: token
+  gemini: token
+  groq: token
+  huggingface: token
+
+benchmark: "MultiWOZ"
+data_split: "test"
+domain: "hotels"
+prompt_category: "default" 
+
+improver_method:
+  method: "self_refine"
+  n_datapoints: 30
+  batch_size: 5
+
+llm_models:
+  assistant_model:
+    provider: "groq"
+    model_name: "llama-3.1-8b-instant"
+    temperature: 0.4
+    max_tokens: 8000
+  
+  user_model:
+    provider: "groq"
+    model_name: "llama-3.1-8b-instant"
+    temperature: 0.0
+    max_tokens: 8000
+    
+  summarizer_model:
+    provider: "openai"
+    model_name: "gpt-4o-mini"
+    temperature: 0.0
+    max_tokens: 16000
+    
+  improver_model:
+    provider: "openai"
+    model_name: "gpt-4o-mini"
+    temperature: 0.4
+    max_tokens: 16000
+    
+  analysis_model:
+    provider: "groq"
+    model_name: "llama-3.1-8b-instant"
+    temperature: 0.0
+    max_tokens: 8000
+    
+  evaluator_model:
+    provider: "groq"
+    model_name: "llama-3.1-8b-instant"
+    temperature: 0.0
+    max_tokens: 8000
+
+logging:
+  base_dir: "Results_Improver"
+  timestamp_format: "%Y%m%d_%H%M%S"
+  
+run_info:
+  run_id: null
+  run_dir: null
